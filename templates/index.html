@@ -1,21 +1,27 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
 
-{% block title %}Productos{% endblock %}
+{% block title %}Inicio{% endblock %}
 
 {% block content %}
-<div class="product-grid">
-    {% for product in products %}
-    <div class="product-card">
-        <img src="{{ product.image_url }}" alt="{{ product.title }}">
-        <h3>{{ product.title }}</h3>
-        <p>{{ product.short_description }}</p>
-        <button onclick="showAd('{{ url_for('product_detail', product_id=product.id) }}')">Descargar</button>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="product-grid">
+                {% for product in products %}
+                <div class="product-card">
+                    <img src="{{ product.image_url }}" alt="{{ product.title }}">
+                    <h3>{{ product.title }}</h3>
+                    <p>{{ product.short_description }}</p>
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary">Ver Detalle</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% if not products %}
+            <div class="alert alert-warning text-center">
+                No se encontraron productos. Aquí hay algunos que podrían interesarte.
+            </div>
+            {% endif %}
+        </div>
     </div>
-    {% endfor %}
-</div>
-
-<div id="ad" style="display:none;">
-    <p>Publicidad...</p>
-    <button onclick="closeAd()">Cerrar Publicidad</button>
 </div>
 {% endblock %}

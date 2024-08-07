@@ -5,7 +5,7 @@
 {% block content %}
 <h1 class="mb-4">Añadir Nuevo Producto</h1>
 
-<form action="{{ url_for('add_product') }}" method="post">
+<form action="{{ url_for('add_product') }}" method="post" enctype="multipart/form-data">
     <div class="mb-3">
         <label for="title" class="form-label">Título del Producto</label>
         <input type="text" class="form-control" id="title" name="title" required>
@@ -19,8 +19,19 @@
         <textarea class="form-control" id="full_description" name="full_description" rows="3" required></textarea>
     </div>
     <div class="mb-3">
-        <label for="image_url" class="form-label">URL de la Imagen</label>
-        <input type="text" class="form-control" id="image_url" name="image_url" required>
+        <label for="category_id" class="form-label">Categoría</label>
+        <div class="input-group">
+            <select class="form-select" id="category_id" name="category_id" required>
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Añadir Categoría</button>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="image" class="form-label">Subir Imagen</label>
+        <input type="file" class="form-control" id="image" name="image" required>
     </div>
     <div class="mb-3">
         <label for="download_link" class="form-label">Enlace de Descarga</label>
@@ -35,4 +46,26 @@
     </div>
     <button type="submit" class="btn btn-primary">Añadir Producto</button>
 </form>
+
+<!-- Modal para añadir nueva categoría -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCategoryModalLabel">Añadir Nueva Categoría</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addCategoryForm" action="{{ url_for('add_category') }}" method="post">
+          <div class="mb-3">
+            <label for="category_name" class="form-label">Nombre de la Categoría</label>
+            <input type="text" class="form-control" id="category_name" name="category_name" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Añadir Categoría</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

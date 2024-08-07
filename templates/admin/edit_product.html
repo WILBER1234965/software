@@ -5,7 +5,7 @@
 {% block content %}
 <h1 class="mb-4">Editar Producto</h1>
 
-<form action="{{ url_for('edit_product', product_id=product.id) }}" method="post">
+<form action="{{ url_for('edit_product', product_id=product.id) }}" method="post" enctype="multipart/form-data">
     <div class="mb-3">
         <label for="title" class="form-label">Título del Producto</label>
         <input type="text" class="form-control" id="title" name="title" value="{{ product.title }}" required>
@@ -19,8 +19,19 @@
         <textarea class="form-control" id="full_description" name="full_description" rows="3" required>{{ product.full_description }}</textarea>
     </div>
     <div class="mb-3">
-        <label for="image_url" class="form-label">URL de la Imagen</label>
-        <input type="text" class="form-control" id="image_url" name="image_url" value="{{ product.image_url }}" required>
+        <label for="category_id" class="form-label">Categoría</label>
+        <select class="form-select" id="category_id" name="category_id" required>
+            {% for category in categories %}
+            <option value="{{ category.id }}" {% if product.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="image" class="form-label">Subir Imagen</label>
+        <input type="file" class="form-control" id="image" name="image">
+        {% if product.image_url %}
+        <p>Imagen actual: <a href="{{ product.image_url }}" target="_blank">{{ product.image_url }}</a></p>
+        {% endif %}
     </div>
     <div class="mb-3">
         <label for="download_link" class="form-label">Enlace de Descarga</label>
@@ -33,6 +44,6 @@
             <option value="descarga_gratuita" {% if product.product_type == 'descarga_gratuita' %}selected{% endif %}>Descarga Gratuita</option>
         </select>
     </div>
-    <button type="submit" class="btn btn-primary">Actualizar Producto</button>
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
 </form>
 {% endblock %}

@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block title %}Comprar {{ product.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Comprar {{ product.title }}</h2>
+    <p>Aquí podrías agregar información sobre el proceso de compra, formulario de pago, etc.</p>
+    <p><strong>Descripción:</strong> {{ product.full_description }}</p>
+</div>
+{% endblock %}

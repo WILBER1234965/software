@@ -1,5 +1,7 @@
+import os
+
 class Config:
-    SECRET_KEY = b'8S2\xcd\x12y\xa3\xd1o\xd6\xf1c\xec\xd5S\xbb\x02\xaf\xe2\xcb\xd8\xc6\xff\x1f'
+    SECRET_KEY = '8S2cd12ya3d1ofd6f1cec5Sbb02afe2cbd8c6ff1f'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///productos.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -9,4 +11,8 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = 'wilberin53@gmail.com'
     MAIL_PASSWORD = 'pefj psze okfx akcl'
-    MAIL_DEFAULT_SENDER = 'wilberin53@gmail.com'  # Añade esta línea
+    MAIL_DEFAULT_SENDER = 'wilberin53@gmail.com'
+
+    # Configuración para la subida de archivos
+    UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}

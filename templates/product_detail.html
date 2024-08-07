@@ -1,10 +1,28 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
 
 {% block title %}{{ product.title }}{% endblock %}
 
 {% block content %}
-<h2>{{ product.title }}</h2>
-<img src="{{ product.image_url }}" alt="{{ product.title }}">
-<p>{{ product.full_description }}</p>
-<a href="{{ product.download_link }}" target="_blank"><button>Descargar</button></a>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="product-image">
+                <img src="{{ product.image_url }}" class="img-fluid" alt="{{ product.title }}">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2 class="product-title">{{ product.title }}</h2>
+            <p class="product-short-description">{{ product.short_description }}</p>
+            <p class="product-full-description">{{ product.full_description }}</p>
+
+            <div class="product-action">
+                {% if product.product_type == 'venta' %}
+                <a href="{{ url_for('purchase_product', product_id=product.id) }}" class="btn btn-success btn-lg">Comprar</a>
+                {% elif product.product_type == 'descarga_gratuita' %}
+                <a href="{{ product.download_link }}" class="btn btn-success btn-lg">Descargar</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
