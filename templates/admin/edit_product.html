@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Producto{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Editar Producto</h1>
+
+<form action="{{ url_for('edit_product', product_id=product.id) }}" method="post">
+    <div class="mb-3">
+        <label for="title" class="form-label">Título del Producto</label>
+        <input type="text" class="form-control" id="title" name="title" value="{{ product.title }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="short_description" class="form-label">Descripción Corta</label>
+        <input type="text" class="form-control" id="short_description" name="short_description" value="{{ product.short_description }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="full_description" class="form-label">Descripción Completa</label>
+        <textarea class="form-control" id="full_description" name="full_description" rows="3" required>{{ product.full_description }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="image_url" class="form-label">URL de la Imagen</label>
+        <input type="text" class="form-control" id="image_url" name="image_url" value="{{ product.image_url }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="download_link" class="form-label">Enlace de Descarga</label>
+        <input type="text" class="form-control" id="download_link" name="download_link" value="{{ product.download_link }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="product_type" class="form-label">Tipo de Producto</label>
+        <select class="form-select" id="product_type" name="product_type" required>
+            <option value="venta" {% if product.product_type == 'venta' %}selected{% endif %}>Venta</option>
+            <option value="descarga_gratuita" {% if product.product_type == 'descarga_gratuita' %}selected{% endif %}>Descarga Gratuita</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Actualizar Producto</button>
+</form>
+{% endblock %}

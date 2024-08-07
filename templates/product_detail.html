@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ product.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ product.title }}</h2>
+<img src="{{ product.image_url }}" alt="{{ product.title }}">
+<p>{{ product.full_description }}</p>
+<a href="{{ product.download_link }}" target="_blank"><button>Descargar</button></a>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block title %}Productos{% endblock %}
+
+{% block content %}
+<div class="product-grid">
+    {% for product in products %}
+    <div class="product-card">
+        <img src="{{ product.image_url }}" alt="{{ product.title }}">
+        <h3>{{ product.title }}</h3>
+        <p>{{ product.short_description }}</p>
+        <button onclick="showAd('{{ url_for('product_detail', product_id=product.id) }}')">Descargar</button>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="ad" style="display:none;">
+    <p>Publicidad...</p>
+    <button onclick="closeAd()">Cerrar Publicidad</button>
+</div>
+{% endblock %}
