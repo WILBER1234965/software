@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Editar Perfil</h1>
+    
+    <!-- Bloque para mostrar mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+    <form method="POST" action="{{ url_for('edit_profile') }}" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="full_name" class="form-label">Nombre Completo</label>
+            <input type="text" class="form-control" id="full_name" name="full_name" value="{{ user.full_name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="bio" class="form-label">Descripción Breve</label>
+            <textarea class="form-control" id="bio" name="bio" rows="3">{{ user.bio }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="contact_number" class="form-label">Número de Contacto</label>
+            <input type="text" class="form-control" id="contact_number" name="contact_number" value="{{ user.contact_number }}">
+        </div>
+        <div class="mb-3">
+            <label for="profile_picture" class="form-label">Foto de Perfil</label>
+            <input type="file" class="form-control" id="profile_picture" name="profile_picture">
+            {% if user.profile_picture %}
+            <img src="{{ url_for('uploaded_file', filename=user.profile_picture) }}" alt="Foto de Perfil" class="img-thumbnail mt-2" width="150">
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
+    </form>
+</div>
+{% endblock %}

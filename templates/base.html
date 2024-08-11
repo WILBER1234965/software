@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Panel de Administración{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -20,6 +21,14 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('add_product') }}">Añadir Producto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('edit_profile') }}">
+                            {% if user.profile_picture %}
+                            <img src="{{ url_for('uploaded_file', filename=user.profile_picture) }}" alt="Foto de Perfil" class="rounded-circle" width="30" height="30">
+                            {% endif %}
+                            {{ user.full_name or 'Perfil' }}
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>

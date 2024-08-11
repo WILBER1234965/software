@@ -33,10 +33,29 @@
         <p>Imagen actual: <a href="{{ product.image_url }}" target="_blank">{{ product.image_url }}</a></p>
         {% endif %}
     </div>
+
+    <!-- Inicio del bloque para editar múltiples enlaces de descarga -->
     <div class="mb-3">
-        <label for="download_link" class="form-label">Enlace de Descarga</label>
-        <input type="text" class="form-control" id="download_link" name="download_link" value="{{ product.download_link }}" required>
+        <label for="download_links" class="form-label">Enlaces de Descarga</label>
+        <div id="download_links_container">
+            {% for link in product.download_links %}
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" name="link_titles[]" value="{{ link.title }}" placeholder="Título del Enlace">
+                <input type="text" class="form-control" name="download_links[]" value="{{ link.url }}" placeholder="URL del Enlace">
+                <button type="button" class="btn btn-outline-secondary remove-link">Eliminar</button>
+            </div>
+            {% endfor %}
+            <!-- Campo vacío para añadir más enlaces -->
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" name="link_titles[]" placeholder="Título del Enlace">
+                <input type="text" class="form-control" name="download_links[]" placeholder="URL del Enlace">
+                <button type="button" class="btn btn-outline-secondary remove-link">Eliminar</button>
+            </div>
+        </div>
+        <button type="button" id="add_link" class="btn btn-outline-primary">Añadir Otro Enlace</button>
     </div>
+    <!-- Fin del bloque para editar múltiples enlaces de descarga -->
+
     <div class="mb-3">
         <label for="product_type" class="form-label">Tipo de Producto</label>
         <select class="form-select" id="product_type" name="product_type" required>
@@ -46,4 +65,23 @@
     </div>
     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
 </form>
+
+<script>
+// Script para añadir y eliminar campos de enlace de descarga con título
+document.getElementById('add_link').addEventListener('click', function() {
+    var container = document.getElementById('download_links_container');
+    var newField = document.createElement('div');
+    newField.className = 'input-group mb-2';
+    newField.innerHTML = '<input type="text" class="form-control" name="link_titles[]" placeholder="Título del Enlace">' +
+                        '<input type="text" class="form-control" name="download_links[]" placeholder="URL del Enlace">' +
+                        '<button type="button" class="btn btn-outline-secondary remove-link">Eliminar</button>';
+    container.appendChild(newField);
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.className.includes('remove-link')) {
+        e.target.parentElement.remove();
+    }
+});
+</script>
 {% endblock %}

@@ -7,7 +7,10 @@
     <h1>Panel de Administración</h1>
     <div>
         <a href="{{ url_for('add_product') }}" class="btn btn-primary">Añadir Nuevo Producto</a>
+        {% if is_superadmin %}
         <a href="{{ url_for('manage_categories') }}" class="btn btn-secondary">Gestionar Categorías</a>
+        <a href="{{ url_for('manage_admins') }}" class="btn btn-info">Gestionar Administradores</a>
+        {% endif %}
     </div>
 </div>
 
@@ -26,6 +29,7 @@
             <th scope="col">Título</th>
             <th scope="col">Categoría</th>
             <th scope="col">Tipo</th>
+            <th scope="col">Usuario</th>
             <th scope="col" class="text-center">Acciones</th>
         </tr>
     </thead>
@@ -35,10 +39,19 @@
             <td>{{ product.title }}</td>
             <td>{{ product.category.name }}</td>
             <td>{{ product.product_type | capitalize }}</td>
-            <td class="text-center">
-                <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-sm btn-warning me-2">Editar</a>
-                <a href="{{ url_for('delete_product', product_id=product.id) }}" class="btn btn-sm btn-danger">Eliminar</a>
+            <td>{{ product.user.email }}</td> <!-- Mostrar el usuario que añadió el producto -->
+
+
+            <td>
+                <a href="{{ url_for('view_comments', product_id=product.id) }}" class="btn btn-info btn-sm">Comentarios</a>
+                <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                <form method="POST" action="{{ url_for('delete_product', product_id=product.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                </form>
             </td>
+            
+
+
         </tr>
         {% endfor %}
     </tbody>

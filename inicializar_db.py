@@ -3,18 +3,19 @@ from werkzeug.security import generate_password_hash
 
 # Configura el contexto de la aplicación
 with app.app_context():
-    # Eliminar todas las tablas existentes
-    db.drop_all()
-    
-    # Crear todas las tablas con la estructura actual del modelo
-    db.create_all()
-    
-    # Crear un nuevo usuario
+    # Verificar si ya existe un superadministrador con el correo especificado
     email = 'wilberin53@gmail.com'
-    password = 'wcy9521721WCY.'
-    hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+    existing_user = User.query.filter_by(email=email).first()
 
-    # Añadir y guardar el nuevo usuario
-    new_user = User(email=email, password=hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
+    if existing_user:
+        print(f"El usuario con el correo {email} ya existe.")
+    else:
+        # Crear y añadir un nuevo superadministrador
+        password = 'wcy9521721WCY.'
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+
+        new_superadmin = User(email=email, password=hashed_password, is_superadmin=True)
+        db.session.add(new_superadmin)
+        db.session.commit()
+
+        print(f"Superadministrador creado: {email}")

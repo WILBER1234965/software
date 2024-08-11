@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Comentarios del Producto{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Comentarios para {{ product.title }}</h2>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mb-3">Volver al Panel de Administración</a>
+    <div class="list-group">
+        {% for comment in comments %}
+        <div class="list-group-item {% if comment.email in admin_emails %}bg-success text-white{% endif %}">
+            <h5>{{ comment.name }}</h5>
+            <p><small>{{ comment.email }}</small></p> <!-- Mostrar el correo aquí -->
+            <p>{{ comment.comment_text }}</p>
+            <small class="text-muted">Publicado el {{ comment.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+            <div class="d-flex justify-content-between mt-2">
+                <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}">
+                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                </form>
+                {% if user.is_superadmin or user.is_admin %}
+                <a href="#replyModal" data-bs-toggle="modal" data-comment-id="{{ comment.id }}" class="btn btn-primary btn-sm reply-btn">Responder</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal para responder -->
+<div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replyModalLabel">Responder Comentario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('add_comment', product_id=product.id) }}">
+                    <input type="hidden" id="parent_id" name="parent_id">
+                    <div class="mb-3">
+                        <label for="comment_text" class="form-label">Comentario</label>
+                        <textarea class="form-control" id="comment_text" name="comment_text" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar Respuesta</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Script para gestionar el modal de respuesta
+    document.querySelectorAll('.reply-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-comment-id');
+            document.getElementById('parent_id').value = commentId;
+        });
+    });
+</script>
+
+{% endblock %}

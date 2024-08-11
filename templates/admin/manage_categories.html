@@ -5,6 +5,22 @@
 {% block content %}
 <div class="container mt-5">
     <h1>Gestionar Categorías</h1>
+
+    <!-- Mostrar mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div>
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Mostrar formulario de añadir categoría solo si es superadministrador -->
+    {% if is_superadmin %}
     <form method="POST" action="{{ url_for('manage_categories') }}">
         <div class="mb-3">
             <label for="name" class="form-label">Nombre de la Categoría</label>
@@ -13,12 +29,17 @@
         <button type="submit" class="btn btn-primary">Añadir Categoría</button>
     </form>
     <hr>
+    {% endif %}
+    
     <h2>Categorías Existentes</h2>
     <ul class="list-group">
         {% for category in categories %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ category.name }}
+            <!-- Mostrar botón de eliminar solo si es superadministrador -->
+            {% if is_superadmin %}
             <a href="{{ url_for('delete_category', category_id=category.id) }}" class="btn btn-danger btn-sm">Eliminar</a>
+            {% endif %}
         </li>
         {% endfor %}
     </ul>

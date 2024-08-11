@@ -5,6 +5,19 @@
 {% block content %}
 <h1 class="mb-4">Añadir Nuevo Producto</h1>
 
+<!-- Mostrar mensajes flash -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div>
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
 <form action="{{ url_for('add_product') }}" method="post" enctype="multipart/form-data">
     <div class="mb-3">
         <label for="title" class="form-label">Título del Producto</label>
@@ -23,20 +36,34 @@
         <div class="input-group">
             <select class="form-select" id="category_id" name="category_id" required>
                 {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
+                <option value="{{ category.id }}" {% if category.id == selected_category %}selected{% endif %}>{{ category.name }}</option>
                 {% endfor %}
             </select>
+            <!-- Mostrar botón de añadir categoría solo si es superadministrador -->
+            {% if is_superadmin %}
             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Añadir Categoría</button>
+            {% endif %}
         </div>
     </div>
     <div class="mb-3">
         <label for="image" class="form-label">Subir Imagen</label>
         <input type="file" class="form-control" id="image" name="image" required>
     </div>
+    
+    <!-- Inicio del bloque para múltiples enlaces de descarga con títulos -->
     <div class="mb-3">
-        <label for="download_link" class="form-label">Enlace de Descarga</label>
-        <input type="text" class="form-control" id="download_link" name="download_link" required>
+        <label for="download_links" class="form-label">Enlaces de Descarga</label>
+        <div id="download_links_container">
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" name="link_titles[]" placeholder="Título del Enlace" required>
+                <input type="text" class="form-control" name="download_links[]" placeholder="URL del Enlace" required>
+                <button type="button" class="btn btn-outline-secondary remove-link">Eliminar</button>
+            </div>
+        </div>
+        <button type="button" id="add_link" class="btn btn-outline-primary">Añadir Otro Enlace</button>
     </div>
+    <!-- Fin del bloque para múltiples enlaces de descarga con títulos -->
+
     <div class="mb-3">
         <label for="product_type" class="form-label">Tipo de Producto</label>
         <select class="form-select" id="product_type" name="product_type" required>
@@ -47,7 +74,8 @@
     <button type="submit" class="btn btn-primary">Añadir Producto</button>
 </form>
 
-<!-- Modal para añadir nueva categoría -->
+<!-- Modal para añadir nueva categoría, visible solo si es superadministrador -->
+{% if is_superadmin %}
 <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -67,5 +95,24 @@
     </div>
   </div>
 </div>
+{% endif %}
 
+<script>
+// Script para añadir y eliminar campos de enlace de descarga con título
+document.getElementById('add_link').addEventListener('click', function() {
+    var container = document.getElementById('download_links_container');
+    var newField = document.createElement('div');
+    newField.className = 'input-group mb-2';
+    newField.innerHTML = '<input type="text" class="form-control" name="link_titles[]" placeholder="Título del Enlace" required>' +
+                        '<input type="text" class="form-control" name="download_links[]" placeholder="URL del Enlace" required>' +
+                        '<button type="button" class="btn btn-outline-secondary remove-link">Eliminar</button>';
+    container.appendChild(newField);
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.className.includes('remove-link')) {
+        e.target.parentElement.remove();
+    }
+});
+</script>
 {% endblock %}

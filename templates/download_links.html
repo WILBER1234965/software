@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+<title>{% block title %}Software Ingepro{% endblock %}</title>
+
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <h2 class="mb-4 text-center text-primary">{{ product.title }}</h2>
+
+                    <div class="download-section">
+                        <h5 class="text-center text-secondary mb-4">Enlaces de Descarga</h5>
+                        <div class="list-group">
+                            {% for link in download_links %}
+                            <a href="{{ link.url }}" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <span class="text-dark font-weight-bold">{{ link.title }}</span>
+                                <span class="badge badge-primary badge-pill">Descargar</span>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 10px;
+    }
+    .card-body {
+        background-color: #f9f9f9;
+        border-radius: 10px;
+    }
+    .download-section h5 {
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+    }
+    .list-group-item {
+        border: 0;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+    .list-group-item:hover {
+        background-color: #f0f0f0;
+    }
+    .list-group-item .badge {
+        background-color: #007bff;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
