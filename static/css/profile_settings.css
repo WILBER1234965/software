@@ -1,0 +1,51 @@
+.profile-picture {
+    position: relative;
+    display: inline-block;
+}
+
+.change-photo-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(50%, 50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+}
+
+.change-photo-btn label {
+    cursor: pointer;
+    color: rgb(171, 50, 50);
+    padding: 5px 10px;
+    border-radius: 50%;
+    background-color: #1ABC9C;
+    transition: background-color 0.3s ease;
+}
+
+.change-photo-btn label:hover {
+    background-color: #16A085;
+}
+
+.form-control {
+    background-color: #34495E;
+    border: 1px solid #2C3E50;
+    color: #40b7d4;
+}
+
+.form-control:focus {
+    background-color: #34495E;
+    color: #338498;
+    border-color: #1ABC9C;
+}
+
+.form-label {
+    color: #174753;
+}
+
+.btn-primary {
+    background-color: #1ABC9C;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #16A085;
+}

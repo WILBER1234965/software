@@ -432,23 +432,29 @@ def download_links(product_id):
 @login_required
 def edit_profile():
     user = User.query.get(session['user_id'])
+
     if request.method == 'POST':
-        user.full_name = request.form['full_name']
-        user.bio = request.form['bio']
-        user.contact_number = request.form['contact_number']
-        
         if 'profile_picture' in request.files:
             file = request.files['profile_picture']
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 user.profile_picture = filename
+                db.session.commit()
+                flash('Foto de perfil actualizada con éxito.', 'success')
+                return redirect(url_for('edit_profile'))
 
-        db.session.commit()
-        flash('Perfil actualizado con éxito.', 'success')
-        return redirect(url_for('edit_profile'))
-    
+        # Esto asegura que solo se actualicen los otros campos cuando no se sube una imagen
+        else:
+            user.full_name = request.form['full_name']
+            user.bio = request.form['bio']
+            user.contact_number = request.form['contact_number']
+            db.session.commit()
+            flash('Perfil actualizado con éxito.', 'success')
+            return redirect(url_for('dashboard'))
+
     return render_template('edit_profile.html', user=user)
+
 
 @app.context_processor
 def inject_user():

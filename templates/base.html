@@ -6,42 +6,192 @@
     <title>{% block title %}Panel de Administración{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden; /* Evita que aparezca el scroll horizontal */
+        }
+
+        .navbar {
+            background-color: #343a40;
+        }
+
+        .navbar .nav-link, .navbar .navbar-brand {
+            color: white !important;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: -250px;
+            background-color: #343a40;
+            transition: all 0.3s;
+            z-index: 1000;
+            padding-top: 60px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            padding: 10px 20px;
+        }
+
+        .sidebar a:hover {
+            background-color: #575d63;
+        }
+
+        .content {
+            margin-left: 0;
+            padding: 20px;
+            transition: margin-left 0.3s;
+        }
+
+        .content.active {
+            margin-left: 250px; /* Hace espacio para la barra lateral */
+        }
+
+        .menu-toggle {
+            cursor: pointer;
+            color: white;
+            font-size: 24px;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle .close-btn {
+            font-size: 24px;
+            color: white;
+            display: none;
+        }
+
+        .sidebar.active + .menu-toggle .fa-bars {
+            display: none;
+        }
+
+        .sidebar.active + .menu-toggle .close-btn {
+            display: block;
+        }
+
+        .navbar-brand {
+            margin-left: 50px;
+        }
+
+        .dropdown-toggle::after {
+            display: none;
+        }
+
+        .navbar-collapse {
+            flex-grow: 0;
+        }
+
+        .navbar .navbar-nav .nav-item {
+            margin-left: 20px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+    </style>
+    {% block styles %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="sidebar" id="sidebar">
+        <a href="{{ url_for('edit_profile') }}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
+        <a href="{{ url_for('dashboard') }}"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="{{ url_for('add_product') }}"><i class="fas fa-plus"></i> Añadir Producto</a>
+        {% if user.is_superadmin %}
+        <a href="{{ url_for('manage_categories') }}"><i class="fas fa-tags"></i> Gestionar Categorías</a>
+        <a href="{{ url_for('manage_admins') }}"><i class="fas fa-users-cog"></i> Gestionar Administradores</a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+    </div>
+
+    <div class="menu-toggle" id="menu-toggle">
+        <i class="fas fa-bars"></i>
+        <span class="close-btn" id="close-btn">&times;</span>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('dashboard') }}">Admin Panel</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('add_product') }}">Añadir Producto</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('edit_profile') }}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {% if user.profile_picture %}
                             <img src="{{ url_for('uploaded_file', filename=user.profile_picture) }}" alt="Foto de Perfil" class="rounded-circle" width="30" height="30">
                             {% endif %}
                             {{ user.full_name or 'Perfil' }}
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('edit_profile') }}">Editar Perfil</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-
-    <div class="container mt-4">
-        {% block content %}{% endblock %}
+    
+    <div class="content" id="content">
+        <div class="container mt-4">
+            {% block content %}{% endblock %}
+        </div>
     </div>
 
+    <div class="overlay" id="overlay"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+        const overlay = document.getElementById('overlay');
+        const menuToggle = document.getElementById('menu-toggle');
+        const closeBtn = document.getElementById('close-btn');
+
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            content.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        closeBtn.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            content.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            content.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    </script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -1,2 +1,4 @@
 Flask
 Flask-SQLAlchemy
+pip install Flask-Mail
+
