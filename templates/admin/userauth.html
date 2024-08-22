@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #0d1b2a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .auth-container {
+            width: 350px;
+            position: relative;
+        }
+
+        .auth-box {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
+        }
+
+        #login-box {
+            opacity: 1;
+            z-index: 2;
+        }
+
+        #register-box {
+            background-color: #ff4757;
+            color: #ffffff;
+            padding: 60px 40px;
+            z-index: 1;
+            transform: translateY(100%);
+            opacity: 0;
+        }
+
+        .auth-box h2 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 40px 10px 10px;
+            border: none;
+            border-radius: 25px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            outline: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            background-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0px 0px 10px #00aaff;
+        }
+
+        .input-group label {
+            position: absolute;
+            top: -15px;
+            left: 10px;
+            font-size: 14px;
+            color: #00aaff;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00aaff;
+            font-size: 18px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00aaff;
+            cursor: pointer;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            background-color: #00aaff;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .auth-button:hover {
+            background-color: #0077cc;
+        }
+
+        .switch-link {
+            color: #00aaff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .switch-link:hover {
+            color: #0077cc;
+        }
+
+        .curved-button {
+            background-color: #ff4757;
+            color: #ffffff;
+            font-weight: bold;
+            border-radius: 50px 50px 0 0;
+            padding: 40px 0; /* Altura aumentada para cubrir el formulario */
+            text-align: center;
+            transition: transform 0.7s ease-in-out;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        .curved-button a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .curved-button:hover {
+            background-color: #ff6b81;
+        }
+
+        /* Animación del botón registrarse */
+        .curved-button.expand {
+            transform: translateY(-100%);
+        }
+
+        .curved-button.expand ~ #login-box {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        .curved-button.expand ~ #register-box {
+            transform: translateY(0);
+            opacity: 1;
+            z-index: 4;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box" id="login-box">
+            <h2>Iniciar Sesión</h2>
+            <form action="#" method="post">
+                <div class="input-group">
+                    <input type="email" name="email" required>
+                    <label for="email">Correo Electrónico</label>
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" required>
+                    <label for="password">Contraseña</label>
+                    <i class="fas fa-lock"></i>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('password')">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <button type="submit" class="auth-button">Iniciar Sesión</button>
+                <a href="#" class="switch-link">¿Olvidaste tu contraseña?</a>
+            </form>
+            <div class="curved-button" onclick="showRegisterForm()">
+                <a href="javascript:void(0);">REGISTRARSE</a>
+            </div>
+        </div>
+
+        <div class="auth-box" id="register-box">
+            <h2>Registrarse</h2>
+            <form action="#" method="post">
+                <div class="input-group">
+                    <input type="text" name="full_name" required>
+                    <label for="full_name">Nombre Completo</label>
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="input-group">
+                    <input type="email" name="email" required>
+                    <label for="email">Correo Electrónico</label>
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" id="password-register" required>
+                    <label for="password">Contraseña</label>
+                    <i class="fas fa-lock"></i>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('password-register')">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="confirm_password" id="confirm_password" required>
+                    <label for="confirm_password">Confirmar Contraseña</label>
+                    <i class="fas fa-lock"></i>
+                </div>
+                <button type="submit" class="auth-button">Registrarse</button>
+                <a href="javascript:void(0);" class="switch-link" onclick="showLoginForm()">¿Ya tienes una cuenta? Iniciar Sesión</a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showRegisterForm() {
+            const curvedButton = document.querySelector('.curved-button');
+            curvedButton.classList.add('expand');
+            setTimeout(() => {
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('register-box').style.display = 'block';
+            }, 700);
+        }
+
+        function showLoginForm() {
+            const curvedButton = document.querySelector('.curved-button');
+            document.getElementById('register-box').style.display = 'none';
+            document.getElementById('login-box').style.display = 'block';
+            curvedButton.classList.remove('expand');
+        }
+
+        function togglePasswordVisibility(id) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        }
+    </script>
+</body>
+</html>

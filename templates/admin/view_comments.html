@@ -6,22 +6,58 @@
 <div class="container mt-5">
     <h2>Comentarios para {{ product.title }}</h2>
     <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mb-3">Volver al Panel de Administración</a>
+    
+    <!-- Mensajes de Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert alert-dismissible fade show mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Listado de comentarios -->
     <div class="list-group">
         {% for comment in comments %}
-        <div class="list-group-item {% if comment.email in admin_emails %}bg-success text-white{% endif %}">
-            <h5>{{ comment.name }}</h5>
-            <p><small>{{ comment.email }}</small></p> <!-- Mostrar el correo aquí -->
-            <p>{{ comment.comment_text }}</p>
-            <small class="text-muted">Publicado el {{ comment.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
-            <div class="d-flex justify-content-between mt-2">
-                <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}">
-                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                </form>
-                {% if user.is_superadmin or user.is_admin %}
-                <a href="#replyModal" data-bs-toggle="modal" data-comment-id="{{ comment.id }}" class="btn btn-primary btn-sm reply-btn">Responder</a>
-                {% endif %}
-            </div>
-        </div>
+            {% if not comment.parent_id %}
+                <div class="list-group-item {% if comment.email in admin_emails %}bg-success text-white{% endif %}">
+                    <h5>{{ comment.name }}</h5>
+                    <p><small>{{ comment.email }}</small></p>
+                    <p>{{ comment.comment_text }}</p>
+                    <small class="text-muted">Publicado el {{ comment.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                    <div class="d-flex justify-content-between mt-2">
+                        <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                        {% if admin.is_superadmin or admin.is_admin %}
+                        <a href="#replyModal" data-bs-toggle="modal" data-comment-id="{{ comment.id }}" class="btn btn-primary btn-sm reply-btn">Responder</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Respuestas anidadas -->
+                {% for reply in comment.replies %}
+                <div class="list-group-item ms-5 {% if reply.email in admin_emails %}bg-success text-white{% endif %}">
+                    <h6>{{ reply.name }}</h6>
+                    <p><small>{{ reply.email }}</small></p>
+                    <p>{{ reply.comment_text }}</p>
+                    <small class="text-muted">Publicado el {{ reply.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                    <div class="d-flex justify-content-between mt-2">
+                        <form method="POST" action="{{ url_for('delete_comment', comment_id=reply.id) }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                        {% if admin.is_superadmin or admin.is_admin %}
+                        <a href="#replyModal" data-bs-toggle="modal" data-comment-id="{{ reply.id }}" class="btn btn-primary btn-sm reply-btn">Responder</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
         {% endfor %}
     </div>
 </div>

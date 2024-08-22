@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Correo Electrónico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/verify_email.css') }}">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="verification-card">
+            <h2>Verificación de Correo Electrónico</h2>
+            <p>Hola, {{ user.full_name }}. Hemos enviado un código de verificación a tu correo electrónico: <strong>{{ user.email }}</strong>. Por favor, ingresa el código a continuación para completar tu registro.</p>
+            
+            <form action="{{ url_for('verify_email') }}" method="POST">
+                <div class="input-group">
+                    <label for="verification_code">Código de Verificación</label>
+                    <input type="text" id="verification_code" name="verification_code" required>
+                </div>
+                <button type="submit" class="btn">Verificar</button>
+            </form>
+
+            <p class="resend-text">
+                ¿No recibiste el código? 
+                <span id="resend-timer">
+                    Reenviar código en <span id="timer"></span> segundos
+                </span>
+                <a id="resend-link" href="{{ url_for('resend_verification_code', user_id=user.id) }}" style="display:none;">Reenviar código</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Script para manejar el temporizador -->
+    <script>
+        let secondsRemaining = {{ seconds_remaining }};
+        const timerElement = document.getElementById('timer');
+        const resendLink = document.getElementById('resend-link');
+        const resendTimer = document.getElementById('resend-timer');
+
+        function updateTimer() {
+            if (secondsRemaining > 0) {
+                timerElement.textContent = secondsRemaining;
+                secondsRemaining--;
+            } else {
+                resendTimer.style.display = 'none';
+                resendLink.style.display = 'inline';
+            }
+        }
+
+        updateTimer(); // Actualiza inmediatamente
+        setInterval(updateTimer, 1000); // Actualiza cada segundo
+    </script>
+
+    <!-- Script para mostrar mensajes de Flask usando SweetAlert2 -->
+    <script>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    Swal.fire({
+                        icon: "{{ category }}",
+                        title: "{{ message }}",
+                        timer: 3000,
+                        showConfirmButton: false,
+                        timerProgressBar: true,
+                        toast: true,
+                        position: 'top-end',
+                    });
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </script>
+</body>
+</html>

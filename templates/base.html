@@ -11,7 +11,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            overflow-x: hidden; /* Evita que aparezca el scroll horizontal */
+            overflow-x: hidden;
         }
 
         .navbar {
@@ -57,7 +57,7 @@
         }
 
         .content.active {
-            margin-left: 250px; /* Hace espacio para la barra lateral */
+            margin-left: 250px;
         }
 
         .menu-toggle {
@@ -116,20 +116,40 @@
         .overlay.active {
             display: block;
         }
+        @media (max-width: 576px) {
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch; /* Mejorar la experiencia en dispositivos móviles */
+            }
+        }
+        
+
     </style>
     {% block styles %}{% endblock %}
 </head>
 <body>
 
     <div class="sidebar" id="sidebar">
-        <a href="{{ url_for('edit_profile') }}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
+        {% if admin %}
+        <a href="{{ url_for('edit_profile_admin') }}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
         <a href="{{ url_for('dashboard') }}"><i class="fas fa-home"></i> Dashboard</a>
         <a href="{{ url_for('add_product') }}"><i class="fas fa-plus"></i> Añadir Producto</a>
-        {% if user.is_superadmin %}
-        <a href="{{ url_for('manage_categories') }}"><i class="fas fa-tags"></i> Gestionar Categorías</a>
-        <a href="{{ url_for('manage_admins') }}"><i class="fas fa-users-cog"></i> Gestionar Administradores</a>
+        {% if admin.is_superadmin %}
+            <a href="{{ url_for('manage_categories') }}"><i class="fas fa-tags"></i> Gestionar Categorías</a>
+            <a href="{{ url_for('manage_admins') }}"><i class="fas fa-users-cog"></i> Gestionar Administradores</a>
+            <a href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Administrar Usuarios</a> <!-- Enlace añadido -->
+            
+            
         {% endif %}
         <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="text-green"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+        {% endif %}
     </div>
 
     <div class="menu-toggle" id="menu-toggle">
@@ -143,14 +163,17 @@
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {% if user.profile_picture %}
-                            <img src="{{ url_for('uploaded_file', filename=user.profile_picture) }}" alt="Foto de Perfil" class="rounded-circle" width="30" height="30">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if admin and admin.profile_picture %}
+                            <img src="{{ url_for('uploaded_file', filename=admin.profile_picture) }}" alt="Foto de Perfil" class="rounded-circle" width="30" height="30">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='images/default_user.png') }}" alt="Foto de Perfil Predeterminada" class="rounded-circle" width="30" height="30">
                             {% endif %}
-                            {{ user.full_name or 'Perfil' }}
+                            {{ admin.full_name or 'Perfil' }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('edit_profile') }}">Editar Perfil</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownAdmin">
+                            <li><a class="dropdown-item" href="{{ url_for('edit_profile_admin') }}">Editar Perfil</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Cerrar Sesión</a></li>
                         </ul>
                     </li>
                 </ul>

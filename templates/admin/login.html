@@ -3,41 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Iniciar Sesión</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
 </head>
 <body>
+    <!-- Contenedor de partículas -->
+    <div id="particles-js"></div>
+
     <div class="login-container">
         <div class="login-box">
+            <div class="profile-picture">
+                <img src="{{ url_for('static', filename='images/user_icon.png') }}" alt="User Icon">
+            </div>
             <div class="login-header">
-                <h2>My Account</h2>
-                <div class="user-icon">
-                    <img src="{{ url_for('static', filename='images/user_icon.png') }}" alt="User Icon">
-                </div>
+                <h2>Iniciar Sesión</h2>
             </div>
             <form action="{{ url_for('login') }}" method="POST">
                 <div class="login-field">
-                    <label for="email">Email</label>
+                    <label for="email">Correo Electrónico</label>
                     <input type="text" id="email" name="email" required>
                 </div>
                 <div class="login-field">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                    <a href="{{ url_for('forgot_password') }}" class="forgot-password">Forgot password?</a>
+                    <label for="password">Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" required>
+                        <span class="toggle-password" onclick="togglePassword()">👁️</span>
+                    </div>
+                    <a href="{{ url_for('forgot_password') }}" class="forgot-password">¿Olvidaste tu contraseña?</a>
                 </div>
-                <button type="submit" class="login-btn">Sign in</button>
+                <button type="submit" class="login-btn">Iniciar Sesión</button>
             </form>
             {% with messages = get_flashed_messages(with_categories=True) %}
                 {% if messages %}
                     <ul class="flashes">
                     {% for category, message in messages %}
-                        <li class="alert alert-{{ category }}">{{ message }}</li>
+                        <li class="alert alert-{{ category }} animate__animated animate__fadeInDown">{{ message }}</li>
                     {% endfor %}
                     </ul>
                 {% endif %}
             {% endwith %}
         </div>
     </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+        }
+
+        // Configuración de partículas usando particles.js
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 100,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ffffff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 5,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 400,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+
+        // Animación de entrada del formulario
+        anime({
+            targets: '.login-box',
+            scale: [0.8, 1],
+            opacity: [0, 1],
+            duration: 1500,
+            easing: 'easeInOutExpo'
+        });
+
+        // Animación de la imagen de perfil
+        anime({
+            targets: '.profile-picture img',
+            scale: [0, 1],
+            rotate: ['-360deg', '0deg'],
+            duration: 2000,
+            easing: 'easeInOutElastic'
+        });
+    </script>
 </body>
 </html>

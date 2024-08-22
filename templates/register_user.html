@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrarse</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.ico') }}"> <!-- Mantiene el icono de la pestaña -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/userlogin.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!-- Fondo animado -->
+    <div id="particles-js"></div>
+
+    <!-- Contenedor principal -->
+    <div id="login-container">
+        <div id="login-box">
+            <!-- Avatar animado con un casco de ingeniero -->
+            <div id="avatar">
+                <img src="{{ url_for('static', filename='images/user_icon.png') }}" alt="Avatar">
+            </div>
+            <h2>Registrarse</h2>
+            <form action="{{ url_for('register') }}" method="post">
+                <div class="input-group">
+                    <input type="text" name="full_name" required>
+                    <label for="full_name">Nombre Completo</label>
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="input-group">
+                    <input type="email" name="email" required>
+                    <label for="email">Correo Electrónico</label>
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" required>
+                    <label for="password">Contraseña</label>
+                    <i class="fas fa-lock"></i>
+                    <span id="toggle-password" class="toggle-password">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="confirm_password" id="confirm_password" required>
+                    <label for="confirm_password">Confirmar Contraseña</label>
+                    <i class="fas fa-lock"></i>
+                </div>
+                <button type="submit" id="register-button">Registrarse</button>
+                <div id="login-link-container">
+                    <a href="{{ url_for('login_user') }}" id="login-button">Iniciar Sesión</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts para animaciones y mostrar/ocultar contraseña -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+    <script>
+        const togglePassword = document.querySelector('#toggle-password');
+        const passwordInput = document.querySelector('#password');
+        const confirmPasswordInput = document.querySelector('#confirm_password');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            confirmPasswordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+    </script>
+    <script>
+       // Mostrar alerta si hay un mensaje flash
+       {% if alert_type %}
+       Swal.fire({
+           icon: '{{ alert_type }}',  // 'success', 'error', 'warning', 'info'
+           title: '{{ alert_title }}',
+           text: '{{ alert_message }}',
+           confirmButtonText: 'OK',
+           timer: 3000  // Ocultar automáticamente después de 3 segundos
+       });
+   {% endif %}
+</script>
+</body>
+</html>

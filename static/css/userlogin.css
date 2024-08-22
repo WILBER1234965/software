@@ -1,0 +1,308 @@
+/* Reseteo de estilos básicos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Fondo animado de partículas */
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #0d1b2a;
+    z-index: -1;
+}
+
+/* Contenedor principal del login */
+#login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+    opacity: 0;
+    animation: fadeIn 1.5s ease-in-out forwards;
+}
+
+/* Animación de fade-in para el contenedor */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Caja del login */
+#login-box {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    padding: 50px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.7);
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 400px;
+    animation: float 6s ease-in-out infinite;
+    border: 2px solid rgba(0, 170, 255, 0.5);
+    transition: transform 0.5s ease;
+}
+
+#login-box:hover {
+    transform: scale(1.05);
+}
+
+/* Animación del cuadro de login */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(-15px);
+    }
+    50% {
+        transform: translateY(15px);
+    }
+}
+
+/* Avatar con casco de ingeniero */
+#avatar {
+    margin-bottom: 30px;
+    position: relative;
+    animation: rotate 6s linear infinite, bounce 2s infinite ease-in-out;
+}
+
+#avatar img {
+    width: 120px;
+    border-radius: 50%;
+    border: 5px solid #00aaff;
+    box-shadow: 0px 0px 20px rgba(0, 170, 255, 0.5);
+}
+
+/* Animación de rotación lenta del avatar */
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Animación de rebote del avatar */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Título del formulario */
+#login-box h2 {
+    color: #ffffff;
+    margin-bottom: 25px;
+    font-size: 26px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Estilos para el grupo de inputs */
+.input-group {
+    position: relative;
+    margin-bottom: 35px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 45px 12px 15px;
+    border: none;
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    outline: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0px 0px 10px rgba(0, 170, 255, 0.5);
+}
+
+.input-group input:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0px 0px 15px rgba(0, 170, 255, 0.7);
+}
+
+.input-group label {
+    position: absolute;
+    top: -20px;
+    left: 15px;
+    font-size: 14px;
+    color: #00aaff;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.input-group i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #00aaff;
+    font-size: 20px;
+}
+
+/* Botón de mostrar/ocultar contraseña */
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #00aaff;
+    cursor: pointer;
+}
+
+/* Botón de iniciar sesión */
+/* Botón de iniciar sesión */
+#login-button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 25px;
+    background-color: #00aaff;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0px 10px 20px rgba(0, 170, 255, 0.5);
+    margin-bottom: 25px; /* Incrementa el margen inferior para más separación */
+}
+
+#login-button:hover {
+    background-color: #0077cc;
+    box-shadow: 0px 15px 30px rgba(0, 119, 204, 0.7);
+}
+
+/* Contenedor del enlace de registro */
+#register-link-container {
+    margin-top: 10px; /* Añade un margen superior si es necesario */
+    text-align: center;
+}
+
+#register-link-container a {
+    width: 100%;
+    display: inline-block;
+    padding: 15px;
+    border-radius: 25px;
+    background-color: #ff4757;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0px 10px 20px rgba(255, 71, 87, 0.5);
+    animation: pulse 2s infinite;
+}
+
+#register-link-container a:hover {
+    background-color: #ff6b81;
+    box-shadow: 0px 15px 30px rgba(255, 107, 129, 0.7);
+}
+
+/* Botón de registrarse */
+#register-button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 25px;
+    background-color: #ff4757;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0px 10px 20px rgba(255, 71, 87, 0.5);
+    animation: pulse 2s infinite; /* Añadido para hacer que el botón llame la atención */
+    margin-bottom: 10px;
+}
+
+#register-button:hover {
+    background-color: #ff6b81;
+    box-shadow: 0px 15px 30px rgba(255, 107, 129, 0.7);
+}
+
+/* Animación para atraer atención */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Enlace de "Olvidaste tu contraseña" */
+#forgot-password {
+    color: #00aaff;
+    text-decoration: none;
+    font-size: 14px;
+    margin-top: 10px;
+    display: inline-block;
+    transition: color 0.3s ease;
+}
+
+#forgot-password:hover {
+    color: #0077cc;
+    text-decoration: underline;
+}
+
+/* Contenedor del enlace de inicio de sesión */
+#login-link-container {
+    text-align: center;
+    margin-top: 20px; /* Ajuste del margen superior */
+}
+
+#login-link-container a {
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 25px;
+    background-color: #00aaff;
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    box-shadow: 0px 10px 20px rgba(0, 170, 255, 0.5);
+}
+
+#login-link-container a:hover {
+    background-color: #0077cc;
+    box-shadow: 0px 15px 30px rgba(0, 119, 204, 0.7);
+}
+
+/* Ajuste de la animación de partículas */
+@media (max-width: 600px) {
+    #login-box {
+        width: 95%;
+        padding: 30px;
+    }
+    
+    #avatar img {
+        width: 80px;
+    }
+    
+    #login-box h2 {
+        font-size: 20px;
+    }
+    
+    .input-group input {
+        padding: 10px 40px 10px 10px;
+        font-size: 14px;
+    }
+    
+    #login-button, #register-button {
+        padding: 12px;
+        font-size: 16px;
+    }
+}

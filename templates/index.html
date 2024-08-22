@@ -10,7 +10,19 @@
         <h1 class="mt-3 text-primary">Bienvenido a Software Ingepro</h1>
         <p class="lead text-secondary">Encuentra los mejores software, cursos y programas para tus proyectos.</p>
     </div>
-    
+
+    <!-- Formulario de búsqueda -->
+    <div class="row mb-4">
+        <div class="col-md-8 offset-md-2">
+            <form class="d-flex" method="GET" action="{{ url_for('index') }}">
+                <input class="form-control me-2" type="search" placeholder="Buscar productos..." aria-label="Buscar" name="query" value="{{ request.args.get('query', '') }}">
+                <button class="btn btn-outline-primary" type="submit" style="color: #ffffff; background-color: #007bff; border-color: #007bff;">
+                    Buscar
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Grid de productos -->
     <div class="row">
         <div class="col-lg-12">

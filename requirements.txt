@@ -1,4 +1,6 @@
 Flask
 Flask-SQLAlchemy
-pip install Flask-Mail
+Flask-Mail
+flask-login
+flask-oauthlib
 
