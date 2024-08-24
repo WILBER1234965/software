@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
-    <link rel="icon" href="{{ url_for('static', filename='images/logo.ico') }}"> <!-- Mantiene el icono de la pestaña -->
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.ico') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/userlogin.css') }}">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -17,12 +18,11 @@
     <!-- Contenedor principal -->
     <div id="login-container">
         <div id="login-box">
-            <!-- Avatar animado con un casco de ingeniero -->
             <div id="avatar">
                 <img src="{{ url_for('static', filename='images/user_icon.png') }}" alt="Avatar">
             </div>
             <h2>Iniciar Sesión</h2>
-            <form action="{{ url_for('login_user') }}" method="post">
+            <form action="{{ url_for('user_login') }}" method="post">
                 <div class="input-group">
                     <input type="email" name="email" required>
                     <label for="email">Correo Electrónico</label>
@@ -43,7 +43,6 @@
             </form>
         </div>
     </div>
-    
 
     <!-- Scripts para animaciones y mostrar/ocultar contraseña -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
@@ -61,15 +60,19 @@
 
     <!-- SweetAlert2 para mostrar alertas -->
     <script>
-        {% if alert_type %}
-            Swal.fire({
-                icon: '{{ alert_type }}', // 'success', 'error', 'warning', 'info'
-                title: '{{ alert_title }}',
-                text: '{{ alert_message }}',
-                confirmButtonText: 'OK',
-                timer: 3000 // Ocultar automáticamente después de 3 segundos
-            });
-        {% endif %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    Swal.fire({
+                        icon: '{{ category }}', // 'success', 'error', 'warning', 'info'
+                        title: '{{ category|capitalize }}',
+                        text: '{{ message }}',
+                        confirmButtonText: 'OK',
+                        timer: 3000 // Ocultar automáticamente después de 3 segundos
+                    });
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     </script>
 </body>
 </html>

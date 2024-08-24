@@ -9,9 +9,9 @@ class Config:
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
-    MAIL_USERNAME = 'wilberin53@gmail.com'
-    MAIL_PASSWORD = 'pefjpszeokfxakcl'
-    MAIL_DEFAULT_SENDER = 'wilberin53@gmail.com'
+    MAIL_USERNAME = 'ingesprolatam@gmail.com'
+    MAIL_PASSWORD = 'lgdensofnpucvuky'
+    MAIL_DEFAULT_SENDER = 'ingesprolatam@gmail.com'
 
     # Configuración para la subida de archivos
     UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')

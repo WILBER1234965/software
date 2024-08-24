@@ -1,0 +1,61 @@
+
+
+
+<!-- Nuevo archivo: templates/comments.html -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="additional-info bg-light p-4 shadow-sm rounded">
+            <h4 class="text-secondary">Comentarios</h4>
+
+            <!-- Mostrar comentarios existentes -->
+            {% for comment in comments %}
+                {% if not comment.parent_id %}
+                    <div class="comment mb-3">
+                        <div class="d-flex align-items-center">
+                            {% if comment.email in admin_emails %}
+                                <img src="{{ url_for('uploaded_file', filename=admin_emails[comment.email].profile_picture) }}" alt="Foto de perfil de {{ admin_emails[comment.email].full_name }}" class="rounded-circle me-3" width="50" height="50">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='images/user_default.png') }}" alt="Foto de perfil predeterminada" class="rounded-circle me-3" width="50" height="50">
+                            {% endif %}
+                            <h5 class="comment-author">{{ comment.name }}</h5>
+                        </div>
+                        <p>{{ comment.comment_text }}</p>
+                        <small class="text-muted">Publicado el {{ comment.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                        <a href="#" class="reply-link" data-comment-id="{{ comment.id }}">Responder</a>
+                        <hr>
+
+                        <!-- Mostrar respuestas anidadas -->
+                        {% for reply in comment.replies %}
+                            <div class="replies ms-4">
+                                <div class="reply mb-3">
+                                    <div class="d-flex align-items-center">
+                                        {% if reply.email in admin_emails %}
+                                            <img src="{{ url_for('uploaded_file', filename=admin_emails[reply.email].profile_picture) }}" alt="Foto de perfil de {{ admin_emails[reply.email].full_name }}" class="rounded-circle me-3" width="50" height="50">
+                                        {% else %}
+                                            <img src="{{ url_for('static', filename='images/user_default.png') }}" alt="Foto de perfil predeterminada" class="rounded-circle me-3" width="50" height="50">
+                                        {% endif %}
+                                        <h6 class="comment-author">{{ reply.name }}</h6>
+                                    </div>
+                                    <p>{{ reply.comment_text }}</p>
+                                    <small class="text-muted">Publicado el {{ reply.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                                    <hr>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Formulario para añadir un nuevo comentario -->
+            <form method="POST" action="{{ url_for('add_comment', product_id=product.id) }}">
+                <div class="mb-3">
+                    <label for="comment_text" class="form-label">Comentario</label>
+                    <textarea class="form-control" id="comment_text" name="comment_text" rows="3" required>{{ session.get('comment_text', '') }}</textarea>
+                </div>
+                <input type="hidden" name="parent_id" id="parent_id" value="">
+                <button type="submit" class="btn btn-primary">Enviar Comentario</button>
+            </form>
+            
+        </div>
+    </div>
+</div>

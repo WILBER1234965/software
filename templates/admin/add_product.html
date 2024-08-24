@@ -18,6 +18,32 @@
     {% endif %}
 {% endwith %}
 
+<style>
+    /* Estilos adicionales para una apariencia más profesional */
+    .form-label {
+        font-weight: bold;
+    }
+    .input-group {
+        margin-bottom: 15px;
+    }
+    .img-thumbnail {
+        max-height: 200px;
+        margin-top: 10px;
+    }
+    #main_image_preview {
+        border: 2px solid #007bff;
+    }
+    .remove-image {
+        margin-left: 10px;
+    }
+    .btn-outline-primary {
+        margin-top: 10px;
+    }
+    .form-text {
+        font-style: italic;
+    }
+</style>
+
 <form action="{{ url_for('add_product') }}" method="post" enctype="multipart/form-data">
     <div class="mb-3">
         <label for="title" class="form-label">Título del Producto</label>
@@ -36,34 +62,46 @@
         <div class="input-group">
             <select class="form-select" id="category_id" name="category_id" required>
                 {% for category in categories %}
-                <option value="{{ category.id }}" {% if category.id == selected_category %}selected{% endif %}>{{ category.name }}</option>
+                <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
             </select>
-            <!-- Mostrar botón de añadir categoría solo si es superadministrador -->
-            {% if is_superadmin %}
-            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Añadir Categoría</button>
-            {% endif %}
         </div>
     </div>
+    
+    <!-- Imagen principal obligatoria -->
     <div class="mb-3">
-        <label for="image" class="form-label">Subir Imagen</label>
-        <input type="file" class="form-control" id="image" name="image" required>
+        <label for="main_image" class="form-label">Imagen Principal (Obligatoria)</label>
+        <div class="input-group">
+            <input type="file" class="form-control" id="main_image" name="main_image" accept="image/*" required onchange="previewMainImage(this)">
+            <button type="button" class="btn btn-outline-secondary" onclick="pasteFromClipboard('main_image', 'main_image_preview')">Pegar desde portapapeles</button>
+        </div>
+        <img id="main_image_preview" src="" alt="Vista Previa" class="img-thumbnail mt-2" style="display:none;">
+        <small class="form-text text-muted">La imagen principal es obligatoria y no puede ser eliminada, pero puedes cambiarla.</small>
     </div>
     
-    <!-- Inicio del bloque para múltiples enlaces de descarga con títulos -->
+    <!-- Imágenes adicionales -->
+    <div class="mb-3">
+        <label for="additional_images" class="form-label">Imágenes Adicionales</label>
+        <div id="additional_images_container">
+            <!-- Las nuevas imágenes se añadirán aquí -->
+        </div>
+        <button type="button" id="add_additional_image" class="btn btn-outline-primary mt-2">Añadir Otra Imagen</button>
+        <button type="button" id="paste_additional_image" class="btn btn-outline-secondary mt-2" onclick="pasteAdditionalImage()">Pegar desde portapapeles</button>
+    </div>
+    
+    <!-- Enlaces de descarga -->
     <div class="mb-3">
         <label for="download_links" class="form-label">Enlaces de Descarga</label>
         <div id="download_links_container">
             <div class="input-group mb-2">
-                <input type="text" class="form-control" name="link_titles[]" placeholder="Título del Enlace" required>
-                <input type="text" class="form-control" name="download_links[]" placeholder="URL del Enlace" required>
+                <input type="text" class="form-control" name="link_titles[]" placeholder="Título del Enlace">
+                <input type="text" class="form-control" name="download_links[]" placeholder="URL del Enlace">
                 <button type="button" class="btn btn-outline-secondary remove-link">Eliminar</button>
             </div>
         </div>
         <button type="button" id="add_link" class="btn btn-outline-primary">Añadir Otro Enlace</button>
     </div>
-    <!-- Fin del bloque para múltiples enlaces de descarga con títulos -->
-
+    
     <div class="mb-3">
         <label for="product_type" class="form-label">Tipo de Producto</label>
         <select class="form-select" id="product_type" name="product_type" required>
@@ -71,47 +109,131 @@
             <option value="descarga_gratuita">Descarga Gratuita</option>
         </select>
     </div>
+    <div class="mb-3">
+        <label for="recommendations" class="form-label">Recomendaciones (Opcional)</label>
+        <textarea class="form-control" id="recommendations" name="recommendations" rows="3"></textarea>
+    </div>
+    
     <button type="submit" class="btn btn-primary">Añadir Producto</button>
 </form>
 
-<!-- Modal para añadir nueva categoría, visible solo si es superadministrador -->
-{% if is_superadmin %}
-<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addCategoryModalLabel">Añadir Nueva Categoría</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="addCategoryForm" action="{{ url_for('add_category') }}" method="post">
-          <div class="mb-3">
-            <label for="category_name" class="form-label">Nombre de la Categoría</label>
-            <input type="text" class="form-control" id="category_name" name="category_name" required>
-          </div>
-          <button type="submit" class="btn btn-primary">Añadir Categoría</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
-
 <script>
-// Script para añadir y eliminar campos de enlace de descarga con título
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+// Vista previa de la imagen principal
+function previewMainImage(input) {
+    var file = input.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var preview = document.getElementById('main_image_preview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+// Función para pegar imagen desde el portapapeles en el campo de imagen principal
+function pasteFromClipboard(inputId, previewId) {
+    navigator.clipboard.read().then(items => {
+        for (const item of items) {
+            if (item.types.includes('image/png')) {
+                item.getType('image/png').then(blob => {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var preview = typeof previewId === 'string' ? document.getElementById(previewId) : previewId;
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    }
+                    reader.readAsDataURL(blob);
+
+                    // Crear un nuevo File input para que el formulario lo pueda enviar
+                    var newFileInput = new DataTransfer();
+                    newFileInput.items.add(new File([blob], generateUUID() + ".png", { type: blob.type }));
+                    var input = typeof inputId === 'string' ? document.getElementById(inputId) : inputId;
+                    input.files = newFileInput.files;
+                });
+            }
+        }
+    }).catch(err => {
+        console.error('Error al leer desde el portapapeles: ', err);
+    });
+}
+
+// Función para pegar imagen desde el portapapeles en imágenes adicionales
+function pasteAdditionalImage() {
+    navigator.clipboard.read().then(items => {
+        for (const item of items) {
+            if (item.types.includes('image/png')) {
+                item.getType('image/png').then(blob => {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        addAdditionalImageField(e.target.result, blob);
+                    }
+                    reader.readAsDataURL(blob);
+                });
+            }
+        }
+    }).catch(err => {
+        console.error('Error al leer desde el portapapeles: ', err);
+    });
+}
+
+function addAdditionalImageField(imageSrc = '', blob = null) {
+    var container = document.getElementById('additional_images_container');
+    var newField = document.createElement('div');
+    newField.className = 'input-group mb-2';
+    newField.innerHTML = `
+        <input type="file" class="form-control" name="additional_images[]" accept="image/*" onchange="previewAdditionalImage(this)">
+        <img src="${imageSrc}" alt="Vista Previa" class="img-thumbnail mt-2" style="max-height: 150px; ${imageSrc ? 'display:block;' : 'display:none;'}">
+        <button type="button" class="btn btn-outline-secondary remove-image">Eliminar</button>
+    `;
+
+    container.appendChild(newField);
+
+    if (blob) {
+        var newFileInput = new DataTransfer();
+        newFileInput.items.add(new File([blob], generateUUID() + ".png", { type: blob.type }));
+        newField.querySelector('input[type="file"]').files = newFileInput.files;
+        newField.querySelector('img').style.display = 'block';
+    }
+}
+
+// Manejo de eliminación de imágenes adicionales
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.className.includes('remove-image')) {
+        e.target.closest('.input-group').remove();
+    }
+});
+
+// Añadir campo para nuevas imágenes adicionales
+document.getElementById('add_additional_image').addEventListener('click', function() {
+    addAdditionalImageField();
+});
+
+// Añadir más enlaces de descarga
 document.getElementById('add_link').addEventListener('click', function() {
     var container = document.getElementById('download_links_container');
     var newField = document.createElement('div');
     newField.className = 'input-group mb-2';
-    newField.innerHTML = '<input type="text" class="form-control" name="link_titles[]" placeholder="Título del Enlace" required>' +
-                        '<input type="text" class="form-control" name="download_links[]" placeholder="URL del Enlace" required>' +
-                        '<button type="button" class="btn btn-outline-secondary remove-link">Eliminar</button>';
+    newField.innerHTML = `
+        <input type="text" class="form-control" name="link_titles[]" placeholder="Título del Enlace">
+        <input type="text" class="form-control" name="download_links[]" placeholder="URL del Enlace">
+        <button type="button" class="btn btn-outline-secondary remove-link">Eliminar</button>
+    `;
     container.appendChild(newField);
 });
 
+// Manejo de eliminación de enlaces de descarga
 document.addEventListener('click', function(e) {
     if (e.target && e.target.className.includes('remove-link')) {
-        e.target.parentElement.remove();
+        e.target.closest('.input-group').remove();
     }
 });
 </script>

@@ -26,26 +26,55 @@
             {% endfor %}
         </select>
     </div>
+
+    <!-- Bloque para la imagen principal -->
     <div class="mb-3">
-        <label for="image" class="form-label">Subir Imagen</label>
-        <input type="file" class="form-control" id="image" name="image">
-        {% if product.image_url %}
-        <p>Imagen actual: <a href="{{ product.image_url }}" target="_blank">{{ product.image_url }}</a></p>
+        <label for="main_image" class="form-label">Imagen Principal</label>
+        <div class="input-group">
+            <input type="file" class="form-control" id="main_image" name="main_image" accept="image/*" onchange="previewMainImage(this)">
+            <span id="current_main_image_name" class="input-group-text">{{ product.images[0].image_url.split('/')[-1] }}</span>
+        </div>
+        {% if product.images and product.images[0] %}
+            <img src="{{ product.images[0].image_url }}" id="main_image_preview" class="img-thumbnail mt-2" style="max-height: 200px; display:block;">
+        {% else %}
+            <img id="main_image_preview" class="img-thumbnail mt-2" style="max-height: 200px; display:none;">
         {% endif %}
+        <small class="form-text text-muted">La imagen principal no puede eliminarse, pero puedes cambiarla.</small>
     </div>
 
-    <!-- Inicio del bloque para editar múltiples enlaces de descarga -->
+    <!-- Bloque para imágenes adicionales -->
+    <div class="mb-3">
+        <label for="additional_images" class="form-label">Imágenes Adicionales</label>
+        <div id="additional_images_container">
+            {% if product.images|length > 1 %}
+                {% for image in product.images[1:] %}
+                <div class="input-group mb-2">
+                    <input type="file" class="form-control" name="additional_images[]" accept="image/*" onchange="previewAdditionalImage(this)">
+                    <span class="input-group-text">{{ image.image_url.split('/')[-1] }}</span>
+                    <img src="{{ image.image_url }}" alt="Vista Previa" class="img-thumbnail mt-2" style="max-height: 150px; display:block;">
+                    <label>
+                        <input type="checkbox" name="delete_images[]" value="{{ image.id }}"> Eliminar
+                    </label>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <button type="button" id="add_additional_image" class="btn btn-outline-primary">Añadir Otra Imagen</button>
+    </div>
+
+    <!-- Bloque para múltiples enlaces de descarga -->
     <div class="mb-3">
         <label for="download_links" class="form-label">Enlaces de Descarga</label>
         <div id="download_links_container">
-            {% for link in product.download_links %}
-            <div class="input-group mb-2">
-                <input type="text" class="form-control" name="link_titles[]" value="{{ link.title }}" placeholder="Título del Enlace">
-                <input type="text" class="form-control" name="download_links[]" value="{{ link.url }}" placeholder="URL del Enlace">
-                <button type="button" class="btn btn-outline-secondary remove-link">Eliminar</button>
-            </div>
-            {% endfor %}
-            <!-- Campo vacío para añadir más enlaces -->
+            {% if product.download_links %}
+                {% for link in product.download_links %}
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" name="link_titles[]" value="{{ link.title }}" placeholder="Título del Enlace">
+                    <input type="text" class="form-control" name="download_links[]" value="{{ link.url }}" placeholder="URL del Enlace">
+                    <button type="button" class="btn btn-outline-secondary remove-link">Eliminar</button>
+                </div>
+                {% endfor %}
+            {% endif %}
             <div class="input-group mb-2">
                 <input type="text" class="form-control" name="link_titles[]" placeholder="Título del Enlace">
                 <input type="text" class="form-control" name="download_links[]" placeholder="URL del Enlace">
@@ -54,7 +83,6 @@
         </div>
         <button type="button" id="add_link" class="btn btn-outline-primary">Añadir Otro Enlace</button>
     </div>
-    <!-- Fin del bloque para editar múltiples enlaces de descarga -->
 
     <div class="mb-3">
         <label for="product_type" class="form-label">Tipo de Producto</label>
@@ -63,24 +91,116 @@
             <option value="descarga_gratuita" {% if product.product_type == 'descarga_gratuita' %}selected{% endif %}>Descarga Gratuita</option>
         </select>
     </div>
+    <div class="mb-3">
+        <label for="recommendations" class="form-label">Recomendaciones (Opcional)</label>
+        <textarea class="form-control" id="recommendations" name="recommendations" rows="3">{{ product.recommendations }}</textarea>
+    </div>
+    
     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
 </form>
 
 <script>
-// Script para añadir y eliminar campos de enlace de descarga con título
-document.getElementById('add_link').addEventListener('click', function() {
-    var container = document.getElementById('download_links_container');
-    var newField = document.createElement('div');
-    newField.className = 'input-group mb-2';
-    newField.innerHTML = '<input type="text" class="form-control" name="link_titles[]" placeholder="Título del Enlace">' +
-                        '<input type="text" class="form-control" name="download_links[]" placeholder="URL del Enlace">' +
-                        '<button type="button" class="btn btn-outline-secondary remove-link">Eliminar</button>';
-    container.appendChild(newField);
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+// Vista previa de la imagen principal
+function previewMainImage(input) {
+    var file = input.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var preview = document.getElementById('main_image_preview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+
+            // Mostrar el nombre del archivo seleccionado en el campo de texto
+            document.getElementById('current_main_image_name').innerText = file.name;
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+// Vista previa de imágenes adicionales
+function previewAdditionalImage(input) {
+    var file = input.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var preview = input.nextElementSibling.nextElementSibling;
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+
+            // Actualizar el nombre del archivo en el campo de texto
+            input.nextElementSibling.innerText = file.name;
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+// Función para pegar imagen desde el portapapeles
+function pasteFromClipboard(inputId, previewId) {
+    navigator.clipboard.read().then(items => {
+        for (const item of items) {
+            if (item.types.includes('image/png')) {
+                item.getType('image/png').then(blob => {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var preview = typeof previewId === 'string' ? document.getElementById(previewId) : previewId;
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+
+                        // Crear un nuevo File input para que el formulario lo pueda enviar
+                        var newFileInput = new DataTransfer();
+                        newFileInput.items.add(new File([blob], generateUUID() + ".png", { type: blob.type }));
+                        var input = typeof inputId === 'string' ? document.getElementById(inputId) : inputId;
+                        input.files = newFileInput.files;
+
+                        // Mostrar el nombre del archivo en el campo de texto
+                        document.getElementById('current_main_image_name').innerText = newFileInput.files[0].name;
+                    }
+                    reader.readAsDataURL(blob);
+                });
+            }
+        }
+    }).catch(err => {
+        console.error('Error al leer desde el portapapeles: ', err);
+    });
+}
+
+// Añadir y visualizar imágenes adicionales
+document.getElementById('add_additional_image').addEventListener('click', function() {
+    addAdditionalImageField('', null);
 });
 
+function addAdditionalImageField(imageSrc, blob) {
+    var container = document.getElementById('additional_images_container');
+    var newField = document.createElement('div');
+    newField.className = 'input-group mb-2';
+    newField.innerHTML = `
+        <input type="file" class="form-control" name="additional_images[]" accept="image/*" onchange="previewAdditionalImage(this)">
+        <span class="input-group-text">Sin archivo seleccionado</span>
+        <img src="${imageSrc}" alt="Vista Previa" class="img-thumbnail mt-2" style="max-height: 150px; display:none;">
+        <button type="button" class="btn btn-outline-secondary remove-image">Eliminar</button>
+    `;
+
+    container.appendChild(newField);
+
+    if (blob) {
+        var newFileInput = new DataTransfer();
+        newFileInput.items.add(new File([blob], generateUUID() + ".png", { type: blob.type }));
+        newField.querySelector('input[type="file"]').files = newFileInput.files;
+        newField.querySelector('img').style.display = 'block';
+        newField.querySelector('.input-group-text').innerText = newFileInput.files[0].name;
+    }
+}
+
 document.addEventListener('click', function(e) {
-    if (e.target && e.target.className.includes('remove-link')) {
-        e.target.parentElement.remove();
+    if (e.target && e.target.className.includes('remove-image')) {
+        e.target.closest('.input-group').remove();
     }
 });
 </script>

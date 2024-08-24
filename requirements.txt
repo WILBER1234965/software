@@ -1,6 +1,11 @@
 Flask
 Flask-SQLAlchemy
 Flask-Mail
-flask-login
-flask-oauthlib
-
+Flask-Migrate
+Werkzeug
+itsdangerous
+pandas
+openpyxl
+Flask-WTF
+Flask-Limiter
+paypalrestsdk

@@ -6,6 +6,7 @@
     <title>Iniciar Sesión</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
 </head>
@@ -22,6 +23,7 @@
                 <h2>Iniciar Sesión</h2>
             </div>
             <form action="{{ url_for('login') }}" method="POST">
+
                 <div class="login-field">
                     <label for="email">Correo Electrónico</label>
                     <input type="text" id="email" name="email" required>
@@ -36,6 +38,9 @@
                 </div>
                 <button type="submit" class="login-btn">Iniciar Sesión</button>
             </form>
+            
+            
+           
             {% with messages = get_flashed_messages(with_categories=True) %}
                 {% if messages %}
                     <ul class="flashes">

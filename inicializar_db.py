@@ -1,8 +1,11 @@
-from app import db, app, User
+from app import db, app, User, Product, ProductImage  # Asegúrate de importar todos los modelos necesarios
 from werkzeug.security import generate_password_hash
 
 # Configura el contexto de la aplicación
 with app.app_context():
+    # Crea todas las tablas en la base de datos
+    db.create_all()
+
     # Verificar si ya existe un superadministrador con el correo especificado
     email = 'wilberin53@gmail.com'
     existing_user = User.query.filter_by(email=email).first()

@@ -3,128 +3,141 @@
 {% block title %}Software Ingepro{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_style.css') }}">
+
+<div class="container mt-5 product-details-container">
     <div class="row">
-        <!-- Columna de la Imagen del Producto -->
-        <div class="col-md-6">
-            <div class="product-image shadow-sm">
-                <img src="{{ product.image_url }}" class="img-fluid rounded" alt="{{ product.title }}">
+        <div class="col-left">
+            <div class="image-viewer-container">
+                <h2 class="product-title text-center">Imágenes del Producto</h2>
+                <div class="image-viewer">
+                    {% for image in product.images %}
+                    <!-- Mostrar la imagen del producto -->
+                    <img src="{{ url_for('uploaded_file', filename='products/' ~ product.id ~ '/' ~ image.image_url.split('/')[-1]) }}" 
+                         alt="{{ product.title }}" 
+                         class="product-image {% if loop.index == 1 %}active{% endif %}" 
+                         onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/default_product.png') }}';">
+                    {% endfor %}
+                    <button class="image-control prev">&#10094;</button>
+                    <button class="image-control next">&#10095;</button>
+                    <div class="image-index">1 / {{ product.images|length }}</div>
+                    <div class="progress-indicators">
+                        {% for i in range(product.images|length) %}
+                            <div class="progress-indicator {% if i == 0 %}active{% endif %}" data-slide-to="{{ i }}"></div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
-        <!-- Columna de la Descripción del Producto -->
-        <div class="col-md-6">
+
+        <div class="col-right">
             <div class="product-details bg-white p-4 shadow-sm rounded">
-                <h2 class="product-title text-primary">{{ product.title }}</h2>
+                <h2 class="product-title text-center text-primary">{{ product.title }}</h2>
                 <p class="product-short-description text-muted">{{ product.short_description }}</p>
-                <p class="product-full-description">{{ product.full_description }}</p>
+                <p class="product-full-description text-wrap">{{ product.full_description }}</p>
                 
                 <div class="product-action mt-4">
                     {% if product.product_type == 'venta' %}
                     <a href="{{ url_for('purchase_product', product_id=product.id) }}" class="btn btn-success btn-lg btn-block">
                         <i class="fas fa-shopping-cart"></i> Comprar
                     </a>
-                    {% elif product.product_type == 'descarga_gratuita' %}
+                    {% elif product.product_type == 'descarga_gratuita' and product.download_links %}
                     <a href="{{ url_for('download_links', product_id=product.id) }}" class="btn btn-primary btn-lg btn-block">
                         <i class="fas fa-download"></i> Descargar
                     </a>
-                    {% endif %}
-                                       
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Espacio para la Información del Usuario -->
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="user-info bg-light p-4 shadow-sm rounded">
-                <h4 class="text-secondary">Subido por</h4>
-                <div class="d-flex align-items-center">
-                    {% if product.user.profile_picture %}
-                        <img src="{{ url_for('uploaded_file', filename=product.user.profile_picture) }}" alt="Foto de perfil de {{ product.user.full_name }}" class="rounded-circle me-3" width="100" height="100">
                     {% else %}
-                        <img src="{{ url_for('static', filename='images/user_default.png') }}" alt="Foto de perfil predeterminada" class="rounded-circle me-3" width="100" height="100">
+                    <p class="text-muted">No hay enlaces de descarga disponibles.</p>
                     {% endif %}
-                    <div>
-                        <h5>{{ product.user.full_name or 'Administrador' }}</h5>
-                        <p class="mb-1">Correo: {{ product.user.email }}</p>
-                        <p class="mb-1">Número de Contacto: {{ product.user.contact_number or '' }}</p>
-                        <p>{{ product.user.bio or '' }}</p>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Espacio para Información Adicional y Comentarios -->
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="additional-info bg-light p-4 shadow-sm rounded">
-                <h4 class="text-secondary">Comentarios</h4>
 
-                <!-- Mostrar comentarios existentes -->
-                {% for comment in comments %}
-                    {% if not comment.parent_id %}
-                        <div class="comment mb-3">
-                            <div class="d-flex align-items-center">
-                                {% if comment.email in admin_emails %}
-                                    <img src="{{ url_for('uploaded_file', filename=admin_emails[comment.email].profile_picture) }}" alt="Foto de perfil de {{ admin_emails[comment.email].full_name }}" class="rounded-circle me-3" width="50" height="50">
-                                {% else %}
-                                    <img src="{{ url_for('static', filename='images/user_default.png') }}" alt="Foto de perfil predeterminada" class="rounded-circle me-3" width="50" height="50">
-                                {% endif %}
-                                <h5 class="comment-author">{{ comment.name }}</h5>
-                            </div>
-                            <p>{{ comment.comment_text }}</p>
-                            <small class="text-muted">Publicado el {{ comment.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
-                            <a href="#" class="reply-link" data-comment-id="{{ comment.id }}">Responder</a>
-                            <hr>
-
-                            <!-- Mostrar respuestas anidadas -->
-                            {% for reply in comment.replies %}
-                                <div class="replies ms-4">
-                                    <div class="reply mb-3">
-                                        <div class="d-flex align-items-center">
-                                            {% if reply.email in admin_emails %}
-                                                <img src="{{ url_for('uploaded_file', filename=admin_emails[reply.email].profile_picture) }}" alt="Foto de perfil de {{ admin_emails[reply.email].full_name }}" class="rounded-circle me-3" width="50" height="50">
-                                            {% else %}
-                                                <img src="{{ url_for('static', filename='images/user_default.png') }}" alt="Foto de perfil predeterminada" class="rounded-circle me-3" width="50" height="50">
-                                            {% endif %}
-                                            <h6 class="comment-author">{{ reply.name }}</h6>
-                                        </div>
-                                        <p>{{ reply.comment_text }}</p>
-                                        <small class="text-muted">Publicado el {{ reply.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
-                                        <hr>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-
-
-                <!-- Formulario para añadir un nuevo comentario -->
-                <form method="POST" action="{{ url_for('add_comment', product_id=product.id) }}">
-                    <div class="mb-3">
-                        <label for="comment_text" class="form-label">Comentario</label>
-                        <textarea class="form-control" id="comment_text" name="comment_text" rows="3" required></textarea>
-                    </div>
-                    <input type="hidden" name="parent_id" id="parent_id" value="">
-                    <button type="submit" class="btn btn-primary">Enviar Comentario</button>
-                </form>
+    <!-- Información del autor -->
+    <div class="author-info mt-5 bg-light p-4 rounded shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                <img src="{{ url_for('uploaded_file', filename='profile_pictures/' ~ author.profile_picture.split('/')[-1]) }}" 
+                     alt="{{ author.full_name }}" 
+                     class="img-fluid rounded-circle" style="max-width: 100px;">
+            </div>
+            <div class="col-md-10">
+                <h4 class="text-primary mb-1">{{ author.full_name }}</h4>
+                <p class="text-muted mb-1"><i class="fas fa-envelope"></i> {{ author.email }}</p>
+                <p class="text-muted mb-1"><i class="fas fa-phone"></i> {{ author.contact_number }}</p>
+                <p class="text-muted">{{ author.bio }}</p>
             </div>
         </div>
     </div>
+
+    <!-- Incluir comentarios desde el archivo externo -->
+    {% include 'comments.html' %}
 </div>
 
+<!-- Script personalizado para el visor de imágenes -->
 <script>
-    document.querySelectorAll('.reply-link').forEach(link => {
-        link.addEventListener('click', function(event) {
-            event.preventDefault();
-            const commentId = this.getAttribute('data-comment-id');
-            document.getElementById('parent_id').value = commentId;
-            document.getElementById('comment_text').focus();
+    document.addEventListener("DOMContentLoaded", function () {
+        const images = document.querySelectorAll('.product-image');
+        const prevButton = document.querySelector('.image-control.prev');
+        const nextButton = document.querySelector('.image-control.next');
+        const indexDisplay = document.querySelector('.image-index');
+        const progressIndicators = document.querySelectorAll('.progress-indicator');
+
+        let currentIndex = 0;
+
+        function showImage(index) {
+            images.forEach((img, i) => {
+                img.classList.toggle('active', i === index);
+                progressIndicators[i].classList.toggle('active', i === index);
+            });
+            indexDisplay.textContent = `${index + 1} / ${images.length}`;
+        }
+
+        function showNext() {
+            currentIndex = (currentIndex + 1) % images.length;
+            showImage(currentIndex);
+        }
+
+        function showPrev() {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            showImage(currentIndex);
+        }
+
+        nextButton.addEventListener('click', showNext);
+        prevButton.addEventListener('click', showPrev);
+
+        progressIndicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentIndex = index;
+                showImage(currentIndex);
+            });
+        });
+
+        // Cambiar automáticamente las imágenes cada 3 segundos
+        setInterval(showNext, 1500);
+
+        showImage(currentIndex); // Inicializar el visor mostrando la primera imagen
+
+        // Limpieza del campo de comentario después del envío
+        const commentForm = document.querySelector("form");
+        if (commentForm) {
+            commentForm.addEventListener("submit", function() {
+                const commentField = document.getElementById("comment_text");
+                commentField.value = "";  // Vacía el campo de comentario después de enviar el formulario
+            });
+        }
+
+        // Manejo de respuesta anidada
+        const replyLinks = document.querySelectorAll(".reply-link");
+        replyLinks.forEach(link => {
+            link.addEventListener("click", function(event) {
+                event.preventDefault();
+                const parentIdField = document.getElementById("parent_id");
+                const commentId = this.dataset.commentId;
+                parentIdField.value = commentId;
+                document.getElementById("comment_text").focus();
+            });
         });
     });
 </script>
-
 {% endblock %}

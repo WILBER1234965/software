@@ -29,8 +29,17 @@
                         </div>
                     </div>
                     <div class="text-center mt-4">
-                        <button class="btn btn-outline-secondary"><i class="fas fa-share-alt"></i> Compartir</button>
+                        <button class="btn btn-outline-secondary" onclick="shareProduct()"><i class="fas fa-share-alt"></i> Compartir</button>
                     </div>
+
+                    <!-- Sección de Recomendaciones -->
+                    {% if product.recommendations %}
+                    <div class="recommendations-section mt-5">
+                        <h3 class="text-center text-success">Recomendaciones</h3>
+                        <p class="text-center text-muted">{{ product.recommendations }}</p>
+                    </div>
+                    {% endif %}
+                    <!-- Fin de la Sección de Recomendaciones -->
                 </div>
             </div>
         </div>
@@ -43,7 +52,7 @@
                 <div class="card-body p-4">
                     <h3 class="text-center text-primary">Mira este video sobre cómo evitar anuncios</h3>
                     <div class="text-center">
-                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/Qxm_OXkkCDE?si=BoYTOlSsmwTG_-od" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/ApZ_5knbBtI?si=d6s5nhpqgwKIbXdn" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
@@ -85,13 +94,42 @@
         color: #fff;
     }
     .text-center img {
-        margin-top: 0; /* Reduce el margen superior */
+        margin-top: 0;
     }
-    
     h4 {
-        margin-top: 5px; /* Ajusta el margen entre el logo y el dominio */
-        margin-bottom: 10px; /* Ajusta el margen entre el dominio y el contenido */
+        margin-top: 5px;
+        margin-bottom: 10px;
     }
-    
+    /* Estilos para la sección de Recomendaciones */
+    .recommendations-section h3 {
+        border-bottom: 2px solid #28a745;
+        padding-bottom: 10px;
+    }
+    .recommendations-section a {
+        font-size: 1.1rem;
+        color: #28a745;
+        transition: color 0.3s ease;
+    }
+    .recommendations-section a:hover {
+        color: #218838;
+    }
 </style>
+
+<script>
+function shareProduct() {
+    const url = window.location.href;
+    const text = `En esta página puedes encontrar todo tipo de material de ingeniería civil de alta calidad. Descubre más en: ${url}`;
+    if (navigator.share) {
+        navigator.share({
+            title: 'Software Ingepro',
+            text: text,
+            url: url,
+        }).then(() => {
+            console.log('Gracias por compartir!');
+        }).catch(console.error);
+    } else {
+        prompt("Copia este enlace para compartir:", url);
+    }
+}
+</script>
 {% endblock %}

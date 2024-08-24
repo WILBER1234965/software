@@ -1,0 +1,268 @@
+/* Contenedor principal */
+.product-details-container {
+    margin-top: 0;
+    padding: 0;
+}
+
+/* Estilos para las columnas */
+.product-details-container .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 0;
+}
+
+.product-details-container .col-left,
+.product-details-container .col-right {
+    flex: 1;
+    max-width: 48%;
+    padding: 0;
+}
+
+/* Estilos para el visor de imágenes */
+.image-viewer-container {
+    position: relative;
+    width: 100%;
+    margin: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.image-viewer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 450px;
+    position: relative;
+}
+
+.image-viewer img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    position: absolute;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
+
+.image-viewer img.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.image-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    border: none;
+    color: white;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 24px;
+    z-index: 10;
+    transition: background-color 0.3s ease;
+}
+
+.image-control.prev {
+    left: 15px;
+}
+
+.image-control.next {
+    right: 15px;
+}
+
+.image-control:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.image-index {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    z-index: 10;
+    font-weight: bold;
+}
+
+.progress-indicators {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.progress-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.progress-indicator.active {
+    background-color: #007bff;
+    width: 15px;
+    height: 15px;
+}
+
+/* Estilo general de la imagen */
+.product-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.product-image img:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilos para la descripción del producto */
+.product-details {
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
+    margin-top: 0;
+}
+
+.product-details:hover {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Centrar el título del producto y el texto "Imágenes del Producto" */
+.product-title,
+h2.product-title {
+    font-size: 2.4rem;
+    color: #37296a; /* Cambiar el color a un naranja llamativo */
+    font-family: 'Poppins', sans-serif; /* Cambiar la fuente a algo más moderno y profesional */
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    text-align: center;
+}
+
+.product-short-description,
+.product-full-description {
+    font-size: 1.1rem;
+    color: #444; /* Color más oscuro para mejor legibilidad */
+    margin-top: 10px;
+    line-height: 1.6;
+    word-wrap: break-word;
+    white-space: pre-line;
+    text-align: justify;
+}
+
+/* Estilo del botón de acción */
+.product-action .btn {
+    font-size: 1.25rem;
+    padding: 10px;
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 6px;
+    display: inline-block;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.product-action .btn:hover {
+    transform: scale(1.03);
+}
+
+.product-action .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.product-action .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.product-action .btn-primary {
+    background-color: #ff5733; /* Naranja llamativo */
+    border-color: #ff5733;
+}
+
+.product-action .btn-primary:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+}
+
+/* Información del usuario */
+.user-info {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.user-info h5 {
+    margin-bottom: 12px;
+    font-size: 1.5rem;
+    color: #ff5733; /* Naranja llamativo para el título del usuario */
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.user-info p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .product-details-container .col-left,
+    .product-details-container .col-right {
+        max-width: 100%;
+        flex: 100%;
+        margin-bottom: 20px;
+    }
+
+    .image-viewer {
+        height: 300px;
+    }
+
+    .product-title {
+        font-size: 1.8rem;
+    }
+
+    .product-short-description,
+    .product-full-description {
+        font-size: 1rem;
+    }
+
+    .product-action .btn {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .user-info h5 {
+        font-size: 1.2rem;
+    }
+
+    .user-info p {
+        font-size: 1rem;
+    }
+}

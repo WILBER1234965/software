@@ -1,11 +1,26 @@
 {% extends "layout.html" %}
 
-{% block title %}Comprar {{ product.title }}{% endblock %}
+{% block title %}Apoya Nuestro Proyecto{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Comprar {{ product.title }}</h2>
-    <p>Aquí podrías agregar información sobre el proceso de compra, formulario de pago, etc.</p>
-    <p><strong>Descripción:</strong> {{ product.full_description }}</p>
+    <h2 class="text-center">Apoya Nuestro Proyecto</h2>
+    <p class="text-center">Tu apoyo es clave para seguir creando. Dona y ayúdanos a mejorar cada día. ¡Gracias por estar con nosotros! 💪✨</p>
+
+    <!-- Botón de Donación de PayPal -->
+    <div class="text-center mt-4">
+        <a href="https://www.paypal.com/donate/?hosted_button_id=GMCQQT7ZTV8QE" target="_blank" class="btn btn-primary btn-lg" style="background-color: #009cde; border-color: #009cde;">
+            <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg" alt="PayPal" style="height: 24px; margin-right: 10px;">
+            Donar con PayPal
+        </a>
+    </div>
+
+    <!-- Instrucciones para enviar captura de la donación -->
+    <div class="text-center mt-4">
+        <p>Después de donar, por favor envía una captura de pantalla a nuestro WhatsApp para agradecerte personalmente. 🎉</p>
+        <a href="https://wa.me/59163736294?text=Hola,%20he%20realizado%20una%20donación%20y%20aquí%20está%20la%20captura%20de%20pantalla%20😊🙏" class="btn btn-success btn-lg" target="_blank">
+            Enviar Captura por WhatsApp 📲
+        </a>
+    </div>
 </div>
 {% endblock %}

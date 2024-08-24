@@ -1,12 +1,30 @@
-/* Estilos generales */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f9f9f9;
+    background: linear-gradient(135deg, #f1f1f1, #ffffff); /* Fondo gradiente */
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    min-height: 100vh; /* Asegura que el fondo cubra toda la altura de la página */
     color: #333;
     overflow-x: hidden; /* Evita que aparezca el scroll horizontal */
 }
+
+.content {
+    margin-left: 0;
+    padding: 0px;
+    background-color: transparent; /* Fondo transparente */
+    min-height: calc(100vh - 80px); /* Ajusta el tamaño para que siempre ocupe al menos el 100% de la pantalla */
+    transition: margin-left 0.3s ease;
+}
+
+/* Asegura que el contenido se extienda al 100% de la altura de la página */
+html, body {
+    height: 100%;
+}
+
+
+
 
 /* Estilo del encabezado y pie de página */
 header, footer {
@@ -98,6 +116,7 @@ footer {
 .content {
     margin-left: 0;
     padding: 20px;
+    background-color: #ffffff; /* Fondo blanco para el contenido */
     transition: margin-left 0.3s ease;
 }
 
@@ -470,102 +489,104 @@ th {
     transform: rotate(360deg);
 }
 
+/* Estilos para la barra superior fija */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1030; /* Asegura que esté siempre encima */
+}
 
+/* Ajuste para el contenido */
+.content {
+    margin-top: 80px; /* Espacio para la barra superior fija */
+}
 
+/* Otros estilos personalizados */
+.user-info p {
+    color: #FFC107;
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: bold;
+}
 
+.user-info a {
+    color: white;
+}
 
+.user-info a[href*="edit_profile_user"] {
+    color: #FFA500;
+}
 
+.user-info a[href*="logout_user"] {
+    color: #FF4500;
+}
 
+.user-info a[href*="login_user"] {
+    color: #32CD32;
+}
 
+.sidebar {
+    position: fixed;
+    top: 0; /* Ahora el sidebar se alinea con la barra superior */
+    left: -250px;
+    width: 250px;
+    height: 100%; /* Ocupa toda la altura */
+    background-color: #343a40;
+    z-index: 1020;
+    transition: left 0.3s ease;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+}
 
+.sidebar.active {
+    left: 0;
+}
 
-    /* Estilos para la barra superior fija */
-    .navbar {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1030; /* Asegura que esté siempre encima */
-    }
+.menu-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1100;
+    font-size: 30px;
+    cursor: pointer;
+    color: white;
+}
 
-    /* Ajuste para el contenido */
-    .content {
-        margin-top: 80px; /* Espacio para la barra superior fija */
-    }
+.submenu {
+    display: none;
+    padding-left: 15px;
+}
 
-    /* Otros estilos personalizados */
-    .user-info p {
-        color: #FFC107;
-        margin: 0;
-        font-size: 1.2em;
-        font-weight: bold;
-    }
-    .user-info a {
-        color: white;
-    }
-    .user-info a[href*="edit_profile_user"] {
-        color: #FFA500;
-    }
-    .user-info a[href*="logout_user"] {
-        color: #FF4500;
-    }
-    .user-info a[href*="login_user"] {
-        color: #32CD32;
-    }
+.submenu.active {
+    display: block;
+}
 
-    .sidebar {
-        position: fixed;
-        top: 0; /* Ahora el sidebar se alinea con la barra superior */
-        left: -250px;
-        width: 250px;
-        height: 100%; /* Ocupa toda la altura */
-        background-color: #343a40;
-        z-index: 1020;
-        transition: left 0.3s ease;
-        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-        overflow-y: auto;
-    }
+/* Ajuste para los mensajes de Flask */
+.alert-container {
+    z-index: 1040; /* Asegura que esté siempre visible */
+    position: relative;
+}
 
-    .sidebar.active {
-        left: 0;
-    }
+/* Estilo del overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1010;
+    display: none;
+}
 
-    .menu-toggle {
-        position: fixed;
-        top: 15px;
-        left: 15px;
-        z-index: 1100;
-        font-size: 30px;
-        cursor: pointer;
-        color: white;
-    }
+.overlay.active {
+    display: block;
+}
 
-    .submenu {
-        display: none;
-        padding-left: 15px;
-    }
-
-    .submenu.active {
-        display: block;
-    }
-
-    /* Ajuste para los mensajes de Flask */
-    .alert-container {
-        z-index: 1040; /* Asegura que esté siempre visible */
-        position: relative;
-    }
-
-    /* Estilo del overlay */
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1010;
-        display: none;
-    }
-
-    .overlay.active {
-        display: block;
-    }
+/* Fondo animado */
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}

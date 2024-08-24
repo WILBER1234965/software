@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Panel de Administración{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -16,6 +17,9 @@
 
         .navbar {
             background-color: #343a40;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
         }
 
         .navbar .nav-link, .navbar .navbar-brand {
@@ -53,6 +57,7 @@
         .content {
             margin-left: 0;
             padding: 20px;
+            margin-top: 60px; /* Ajuste para que el contenido no quede oculto debajo de la navbar */
             transition: margin-left 0.3s;
         }
 
@@ -64,7 +69,7 @@
             cursor: pointer;
             color: white;
             font-size: 24px;
-            position: absolute;
+            position: fixed;
             top: 15px;
             left: 15px;
             z-index: 1100;
@@ -116,6 +121,12 @@
         .overlay.active {
             display: block;
         }
+
+        .navbar .btn {
+            font-size: 0.875rem; /* Ajuste del tamaño de la fuente de los botones */
+            padding: 0.25rem 0.5rem; /* Ajuste del padding para hacerlos más pequeños */
+        }
+
         @media (max-width: 576px) {
             .btn {
                 width: 100%;
@@ -127,8 +138,6 @@
                 -webkit-overflow-scrolling: touch; /* Mejorar la experiencia en dispositivos móviles */
             }
         }
-        
-
     </style>
     {% block styles %}{% endblock %}
 </head>
@@ -143,8 +152,6 @@
             <a href="{{ url_for('manage_categories') }}"><i class="fas fa-tags"></i> Gestionar Categorías</a>
             <a href="{{ url_for('manage_admins') }}"><i class="fas fa-users-cog"></i> Gestionar Administradores</a>
             <a href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Administrar Usuarios</a> <!-- Enlace añadido -->
-            
-            
         {% endif %}
         <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
         {% else %}
@@ -157,11 +164,25 @@
         <span class="close-btn" id="close-btn">&times;</span>
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('dashboard') }}">Admin Panel</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="{{ url_for('add_product') }}" class="btn btn-sm btn-primary me-2">Añadir Producto</a>
+                    </li>
+                    {% if is_superadmin %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('manage_categories') }}" class="btn btn-sm btn-secondary me-2">Categorías</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('manage_admins') }}" class="btn btn-sm btn-info me-2">Administradores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('manage_users') }}" class="btn btn-sm btn-dark me-2">Usuarios</a>
+                    </li>
+                    {% endif %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {% if admin and admin.profile_picture %}
